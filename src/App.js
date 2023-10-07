@@ -1,7 +1,7 @@
 import HomePage from "scenes/homePage";
 import LoginPage from "scenes/loginPage/index";
 import ProfilePage from "scenes/profilePage";
-import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
+import { HashRouter, Route, Routes, Navigate } from "react-router-dom";
 import { useMemo } from "react";
 import { useSelector } from "react-redux";
 import { CssBaseline, ThemeProvider } from "@mui/material";
@@ -14,7 +14,7 @@ function App() {
   const theme = useMemo(() => createTheme(themeSettings(mode)), [mode])
   return (
     <div className="app">
-      <BrowserRouter>
+      <HashRouter>
         <ThemeProvider theme={theme}>
           <CssBaseline />
           <Routes>
@@ -29,7 +29,7 @@ function App() {
             />
           </Routes>
         </ThemeProvider>
-      </BrowserRouter>
+      </HashRouter>
     </div>
   );
 }
