@@ -104,15 +104,12 @@ const Form = () => {
       console.log("Value " + value + " values " + values[value]);
       formData.append(value, values[value]);
     }
-    console.log("formdata " + formData.get("firstName"))
     const otpResponse = await fetch("https://connectserver.onrender.com/auth/sendOTP",
       {
         method: "POST",
         body: formData
       });
-    console.log("OTPRes", otpResponse);
     const otpJSONRes = await otpResponse.json();
-    // console.log("status",otpJSONRes.status)
     if (otpJSONRes.message.split(" ")[0] === "409") {
       setErrorMessage("Another user with this email already exists!");
       setAlertOpen(true);

@@ -22,6 +22,10 @@ function NavbarPage() {
 
   const fullName = `${user.firstName} ${user.lastName}`
 
+  const handleLogout=()=>{
+    dispatch(setLogout())
+  }
+
   return <FlexBetween padding="1rem 6%" backgroundColor={alt}>
 
     {/* LOGO + SEARCHBAR */}
@@ -68,8 +72,11 @@ function NavbarPage() {
           }
         </IconButton>
 
-        {/* ICON FOR MESSAGE [DUMMY] */}
-        <Message sx={{ fontSize: "25px" }} />
+        <IconButton
+          onClick={()=>navigate(`/messenger`)}>
+          <Message sx={{ color: dark,fontSize: "25px" }} />
+        </IconButton>
+        
         
         {/* ICON FOR NOTIFICATION [DUMMY] */}
         <Notifications sx={{ fontSize: "25px" }} />
@@ -142,7 +149,10 @@ function NavbarPage() {
             )
             }
           </IconButton>
-          <Message sx={{ fontSize: "25px" }} />
+          <IconButton
+          onClick={()=>navigate(`/messenger`)}>
+          <Message sx={{color: dark, fontSize: "25px" }} />
+          </IconButton>
           <Notifications sx={{ fontSize: "25px" }} />
           <Help sx={{ fontSize: "25px" }} />
           <FormControl variant="standard" value={fullName}>
@@ -165,7 +175,7 @@ function NavbarPage() {
               <MenuItem value={fullName}>
                 <Typography>{fullName}</Typography>
               </MenuItem>
-              <MenuItem onClick={() => dispatch(setLogout())}>Log Out</MenuItem>
+              <MenuItem onClick={handleLogout}>Log Out</MenuItem>
             </Select>
           </FormControl>
         </FlexBetween>

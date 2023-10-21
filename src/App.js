@@ -7,6 +7,7 @@ import { useSelector } from "react-redux";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { createTheme } from "@mui/material/styles"
 import { themeSettings } from "theme";
+import Messenger from "scenes/messenger/Messenger";
 
 function App() {
   const mode = useSelector(state => state.mode);
@@ -26,6 +27,10 @@ function App() {
             <Route
             exact path="/profile/:userId" 
             element={isAuth?<ProfilePage />:<Navigate to="/"/>} 
+            />
+            <Route
+            exact path="/messenger"
+            element={isAuth?<Messenger/>:<Navigate to="/"/>}
             />
           </Routes>
         </ThemeProvider>

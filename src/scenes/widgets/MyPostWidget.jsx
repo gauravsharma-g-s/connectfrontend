@@ -23,7 +23,6 @@ import WidgetWrapper from 'components/WidgetWrapper';
 import { useState } from 'react';
 import Dropzone from 'react-dropzone';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
 import { setPosts } from 'state';
 
 export default function MyPostWidget({ picturePath }) {

@@ -1,0 +1,30 @@
+.message{
+    display:flex;
+    flex-direction:column;
+    margin-top:30px;
+    margin-bottom:0px;
+}
+
+.messageTop{
+    display:flex;
+}
+
+.messageText{
+    padding:10px;
+    border-radius:18px;
+    max-width:300px;
+    margin:0;
+}
+
+.messageBottom{
+    font-size:12px;
+}
+
+.message.own{
+    align-items: flex-end;
+}
+
+.message.own .messageText{
+    background-color:aqua;
+}
+

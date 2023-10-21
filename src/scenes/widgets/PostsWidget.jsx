@@ -4,12 +4,9 @@ import { setPosts } from "state";
 import PostWidget from "./PostWidget";
 
 export default function PostsWidget({userId,isProfile=false}) {
-    console.log("i am in PostsWidget")
     const dispatch = useDispatch();
     const posts = useSelector(state=>state.posts  );
-    console.log(posts);
     const token = useSelector(state=>state.token);
-    console.log(token);
     // GET ALL POSTS
     const getPosts = async()=>{
         const response = await fetch("https://connectserver.onrender.com/posts",{
@@ -29,7 +26,6 @@ export default function PostsWidget({userId,isProfile=false}) {
         dispatch(setPosts({posts:data}));
     };
     useEffect(()=>{
-        console.log("i am useEffect");
         if(isProfile){
             getUserPosts()
         } else{

@@ -4,7 +4,6 @@ import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import NavbarPage from 'scenes/navbar';
 import FriendListWidget from 'scenes/widgets/FriendListWidget';
-import MyPostWidget from 'scenes/widgets/MyPostWidget';
 import PostsWidget from 'scenes/widgets/PostsWidget';
 import UserWidget from 'scenes/widgets/UserWidget';
 
@@ -28,7 +27,7 @@ function ProfilePage() {
 
   useEffect(() => {
     getUser();
-  }, [])
+  }, [])  // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!user)
     return null;
@@ -49,7 +48,7 @@ function ProfilePage() {
         </Box>
         <Box flexBasis={isNonMobileScreens ? "42%" : undefined}
           mt={isNonMobileScreens ? undefined : "2rem"}>
-          <MyPostWidget picturePath={user.picturePath} />
+      
           <PostsWidget userId={userId} isProfile />
         </Box>
       </Box>

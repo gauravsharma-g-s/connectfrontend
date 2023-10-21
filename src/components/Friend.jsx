@@ -22,8 +22,8 @@ export default function Friend({ friendId, name, subtitle, userPicturePath }) {
     const main = palette.neutral.main;
     const medium = palette.neutral.medium;
 
-    const isFriend = friends.find(friend => friend._id === friendId)
-
+    const isFriend = friends.find(friend => friend._id === friendId);
+   
     const patchFriend = async () => {
         const response = await fetch(`https://connectserver.onrender.com/users/${_id}/${friendId}`,
             {
@@ -65,7 +65,7 @@ export default function Friend({ friendId, name, subtitle, userPicturePath }) {
                     </Typography>
                 </Box>
             </FlexBetween>
-            <IconButton
+            {(friendId !== _id ) && (<IconButton
                 onClick={() => patchFriend()}
                 sx={{ backgroundColor: primaryLight, p: "0.6rem" }}
             >
@@ -74,7 +74,7 @@ export default function Friend({ friendId, name, subtitle, userPicturePath }) {
                 ) : (
                     <PersonAddOutlined sx={{ color: primarydark }} />
                 )}
-            </IconButton>
+            </IconButton>)}
         </FlexBetween>
     )
 }
