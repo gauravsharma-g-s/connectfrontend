@@ -13,7 +13,8 @@ export default function PostsWidget({userId,isProfile=false}) {
             method:"GET",
             headers:{Authorization: `Bearer ${token}`}
         });
-        const data = await response.json();
+       let data = await response.json();
+        data = data.reverse()
         dispatch(setPosts({posts:data}));
     };
     // GET USER POSTS
@@ -22,7 +23,8 @@ export default function PostsWidget({userId,isProfile=false}) {
             method:"GET",
             headers:{Authorization: `Bearer ${token}`}
         });
-        const data = await response.json();
+        let data = await response.json();
+        data = data.reverse();
         dispatch(setPosts({posts:data}));
     };
     useEffect(()=>{

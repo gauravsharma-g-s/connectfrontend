@@ -3,7 +3,6 @@ import { Snackbar } from "@mui/material";
 import MuiAlert from '@mui/material/Alert';
 import {
   Box,
-  Button,
   TextField,
   useMediaQuery,
   Typography,
@@ -17,6 +16,7 @@ import { useDispatch } from "react-redux";
 import { setLogin } from "state";
 import Dropzone from "react-dropzone";
 import FlexBetween from "components/FlexBetween";
+import LoadingButton from '@mui/lab/LoadingButton';
 
 const registerSchema = yup.object().shape({
   firstName: yup.string().required("required"),
@@ -68,12 +68,10 @@ const Form = () => {
 
   const [errorMessage, setErrorMessage] = useState('');
   const [alertOpen, setAlertOpen] = useState(false);
-
+  const [loading,setLoading] = useState(false);
   const register = async (values, onSubmitProps) => {
     // this allows us to send otp
-    console.log("USER " + JSON.stringify(user) + " VALUES " + JSON.stringify(values));
     const userWithOTP = { ...user, otp: values['otp'] }
-    console.log("USERWITHOTP " + JSON.stringify(userWithOTP))
 
     const savedUserResponse = await fetch(
       "https://connectserver.onrender.com/auth/register",
@@ -84,18 +82,18 @@ const Form = () => {
       }
     );
     const savedUser = await savedUserResponse.json();
-    console.log("savedUser "+JSON.stringify(savedUser));
-    if(savedUser.error.split(" ")[0]==="400"||savedUser.error.split(" ")[0]==="401"){      // USer enter Empty OTP or Wrong
+    setLoading(false);
+    if (savedUser.error.split(" ")[0] === "400" || savedUser.error.split(" ")[0] === "401") {      // USer enter Empty OTP or Wrong
       setErrorMessage("Please enter a valid OTP!");
       setAlertOpen(true);
     }
-    else{
+    else {
       onSubmitProps.resetForm();
       if (savedUser) {
         setPageType("login");
       }
     }
-   
+
   };
 
   const otpSend = async (values, onSubmitProps) => {
@@ -115,7 +113,6 @@ const Form = () => {
       setAlertOpen(true);
     }
     else {
-      console.log("OTPJSONRES", otpJSONRes);
       setUser({
         firstName: otpJSONRes.data.firstName,
         lastName: otpJSONRes.data.lastName,
@@ -127,6 +124,7 @@ const Form = () => {
         picturePath: otpJSONRes.data.picturePath
       })
       onSubmitProps.resetForm();
+      setLoading(false);
       if (otpJSONRes) {
         setPageType("otp");
       }
@@ -141,6 +139,7 @@ const Form = () => {
       body: JSON.stringify(values),
     });
     const loggedIn = await loggedInResponse.json();
+    setLoading(false);
     onSubmitProps.resetForm();
     if (loggedIn) {                                                 // Login Succesfull
       dispatch(                                                     // dispatch to localStorage
@@ -154,6 +153,7 @@ const Form = () => {
   };
 
   const handleFormSubmit = async (values, onSubmitProps) => {
+    setLoading(true);
     if (isLogin) await login(values, onSubmitProps);
     //  if (isRegister) await register(values, onSubmitProps);
     if (isRegister) await otpSend(values, onSubmitProps);
@@ -267,7 +267,7 @@ const Form = () => {
                     <Dropzone
                       acceptedFiles=".jpg,.jpeg,.png"
                       multiple={false}
-                      onDrop={(acceptedFiles) => 
+                      onDrop={(acceptedFiles) =>
                         setFieldValue("picture", acceptedFiles[0])
                       }
                     >
@@ -325,19 +325,19 @@ const Form = () => {
 
             {/* BUTTONS */}
             <Box>
-              <Button
-                fullWidth
-                type="submit"
-                sx={{
-                  m: "2rem 0",
-                  p: "1rem",
-                  backgroundColor: palette.primary.main,
-                  color: palette.background.alt,
-                  "&:hover": { color: palette.primary.main },
-                }}
+              <LoadingButton loading={loading} loadingIndicator={pageType==="otp"?"Verifying":pageType==="register"?"Signing":'Logging In'} variant="outlined"
+               fullWidth
+               type="submit"
+               sx={{
+                 m: "2rem 0",
+                 p: "1rem",
+                 backgroundColor: palette.primary.main,
+                 color: palette.background.alt,
+                 "&:hover": { color: palette.primary.main },
+               }}
               >
-                {isLogin ? "LOGIN" : isRegister ? "SIGN UP" : "SUBMIT"}
-              </Button>
+              {isLogin ? "LOGIN" : isRegister ? "SIGN UP" : "SUBMIT"}
+              </LoadingButton>
               <Typography
                 onClick={() => {
                   setPageType(isLogin ? "register" : "login");

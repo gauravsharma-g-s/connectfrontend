@@ -35,8 +35,8 @@ function Chats({ conversation, userId, arrivalMsg }) {
       <Avatar src={`https://res.cloudinary.com/ddrbtlpxj/${friend?.picturePath}`} sx={{ marginRight: "10px" }} />
       <div className="senderDetails">
         <span className="chatName">{friend?.firstName + " " + friend?.lastName}</span>
-        <span style={{ fontWeight: 600, fontSize: "0.8rem" }} className="truncate-text">{(arrivalMsg !== null && (arrivalMsg.sender === friend._id) &&(!arrivalMsg.isRead) ? arrivalMsg.message :
-          !conversation.isRead && conversation.sender !== userId && !arrivalMsg?.isRead ? conversation.lastMessage : "")}</span>
+        <span style={{ fontWeight: 600, fontSize: "0.8rem" }} className="truncate-text">{(arrivalMsg !== null && (arrivalMsg.sender === friend._id) &&(!arrivalMsg.isRead) ? arrivalMsg.message.slice(0,10) :
+          !conversation.isRead && conversation.sender !== userId && !arrivalMsg?.isRead ? conversation.lastMessage.slice(0,10) : "")}</span>
       </div>
       <div className="timeDetails">
 

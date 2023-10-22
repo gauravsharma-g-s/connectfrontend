@@ -2,13 +2,13 @@ import NavbarPage from "scenes/navbar"
 import "./messenger.css"
 import Chats from "components/chats/Chats"
 import Message from "components/message/Message"
-import { IconButton, TextField, Box, useTheme } from "@mui/material"
+import { IconButton, TextField, Box, useTheme, useMediaQuery } from "@mui/material"
 import { Send } from "@mui/icons-material"
 import ChatOnline from "components/chatOnline/ChatOnline"
 import { useEffect, useRef, useState } from "react"
 import { useSelector } from "react-redux"
 import { io } from "socket.io-client"
-
+import ActiveFriends from "scenes/widgets/ActiveFriends"
 
 export default function Messenger() {
     const { _id } = useSelector(state => state.user);
@@ -24,6 +24,7 @@ export default function Messenger() {
     const scrollRef = useRef();
     const socket = useRef();
 
+    const isNonMobileScreens = useMediaQuery("(min-width:800px)")
     //  Get All Conversations
     const getConversations = async () => {
         const response = await fetch(`https://connectserver.onrender.com/chats/getConversations/${_id}`,
@@ -74,7 +75,7 @@ export default function Messenger() {
                 senderId: _id,
                 receiverId: receiverId,
                 message: newMessage,
-                isRead:false
+                isRead: false
             });
 
             await fetch(`https://connectserver.onrender.com/chats//updateLastMessage/${currentChat._id}/${_id}`,
@@ -86,7 +87,7 @@ export default function Messenger() {
                     },
                     body: JSON.stringify({ message: newMessage })
                 });
-            
+
             const response = await fetch("https://connectserver.onrender.com/chats/sendMessage",
                 {
                     method: "POST",
@@ -110,17 +111,17 @@ export default function Messenger() {
     const openConversation = async (conversation) => {
 
         try {
-            setArrivalMsg({sender:conversation.sender , message:conversation.message , createdAt:conversation.sentTime ,isRead:true})
-            if(!conversation.isRead){
-            const response = await fetch(`https://connectserver.onrender.com/chats//markAsRead/${conversation._id}/${conversation.sender}`,
-                {
-                    method: "POST",
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        "Content-Type": "application/json"
-                    }
-                })
-            conversation = await response.json()
+            setArrivalMsg({ sender: conversation.sender, message: conversation.message, createdAt: conversation.sentTime, isRead: true })
+            if (!conversation.isRead) {
+                const response = await fetch(`https://connectserver.onrender.com/chats//markAsRead/${conversation._id}/${conversation.sender}`,
+                    {
+                        method: "POST",
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                            "Content-Type": "application/json"
+                        }
+                    })
+                conversation = await response.json()
             }
         }
         catch (err) {
@@ -131,7 +132,7 @@ export default function Messenger() {
 
     useEffect(() => {
         getConversations();
-        socket.current = io('https://connectserver.onrender.com',{
+        socket.current = io('https://connectserver.onrender.com', {
             transports: ['websocket', 'polling', 'flashsocket']
         });
         socket.current.on("getMessage", (data) => {
@@ -160,7 +161,7 @@ export default function Messenger() {
         socket.current.emit("addUser", _id);
         socket.current.on("getUsers", users => {
             setOnlineUsers(
-                user.friends.filter((friend) => users.some((user) => user.userId === friend._id))
+                user.friends.filter((friend) => users.some((user) => user.userId === friend))
             )
         })
     }, [user])   // eslint-disable-line react-hooks/exhaustive-deps
@@ -170,9 +171,12 @@ export default function Messenger() {
             <Box
                 className="messenger"
             >
-                <div className="chatMenu">
-                    <div className="chatMenuWrapper">
+                <div className="chatMenu" style={{flex:(!isNonMobileScreens?'35%':undefined)}}>
+                    <div className="chatMenuWrapper" style={{overflowX:'hidden'}}>
                         <input placeholder="Search for Friends" className="chatMenuInput" />
+                        {!isNonMobileScreens && (<Box>
+                            <ActiveFriends onlineUsers={onlineUsers} userId={_id} setCurrentChat={setCurrentChat} />
+                        </Box>)}
                         {
                             conversations.map((conversation, i) => (
                                 <div key={i} onClick={() => openConversation(conversation)}>
@@ -182,7 +186,7 @@ export default function Messenger() {
                         }
                     </div>
                 </div>
-                <div className="chatBox">
+                <div className="chatBox" style={{flex:(!isNonMobileScreens?'65%':undefined)}} >
                     <div className="chatBoxWrapper">
                         {
                             currentChat ?
@@ -212,11 +216,14 @@ export default function Messenger() {
                         }
                     </div>
                 </div>
+
+                {isNonMobileScreens && (
                 <div className="chatOnline">
                     <div className="chatOnlineWrapper">
-                        <ChatOnline onlineUsers={onlineUsers} userId={_id} setCurrentChat={setCurrentChat} userFriends={user.friends} />
+                        <ChatOnline onlineUsers={onlineUsers} userId={_id} setCurrentChat={setCurrentChat}  />
                     </div>
                 </div>
+                )}
 
             </Box>
         </Box>
