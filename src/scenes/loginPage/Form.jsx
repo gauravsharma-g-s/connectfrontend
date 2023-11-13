@@ -99,7 +99,6 @@ const Form = () => {
   const otpSend = async (values, onSubmitProps) => {
     const formData = new FormData();
     for (let value in values) {
-      console.log("Value " + value + " values " + values[value]);
       formData.append(value, values[value]);
     }
     const otpResponse = await fetch("https://connectserver.onrender.com/auth/sendOTP",
@@ -121,7 +120,8 @@ const Form = () => {
         friends: otpJSONRes.data.friends,
         location: otpJSONRes.data.location,
         occupation: otpJSONRes.data.occupation,
-        picturePath: otpJSONRes.data.picturePath
+        picturePath: otpJSONRes.data.picturePath,
+        otpId: otpJSONRes.data.otpId
       })
       onSubmitProps.resetForm();
       setLoading(false);
@@ -140,8 +140,9 @@ const Form = () => {
     });
     const loggedIn = await loggedInResponse.json();
     setLoading(false);
-    onSubmitProps.resetForm();
-    if (loggedIn) {                                                 // Login Succesfull
+   
+    if (loggedInResponse.status===200) {                                                 // Login Succesfull
+      onSubmitProps.resetForm();
       dispatch(                                                     // dispatch to localStorage
         setLogin({
           user: loggedIn.user,
@@ -149,6 +150,10 @@ const Form = () => {
         })
       );
       navigate("/home");                                            // Goto HomePage
+    }
+    else if(loggedInResponse.status===400){
+      setAlertOpen(true);
+      setErrorMessage("Please Check your email or password!")
     }
   };
 
@@ -325,7 +330,7 @@ const Form = () => {
 
             {/* BUTTONS */}
             <Box>
-              <LoadingButton loading={loading} loadingIndicator={pageType==="otp"?"Verifying":pageType==="register"?"Signing":'Logging In'} variant="outlined"
+              <LoadingButton loading={loading} loadingIndicator={pageType==="otp"?"Verifying...":pageType==="register"?"Signing...":'Logging In...'} variant="outlined"
                fullWidth
                type="submit"
                sx={{
@@ -336,7 +341,7 @@ const Form = () => {
                  "&:hover": { color: palette.primary.main },
                }}
               >
-              {isLogin ? "LOGIN" : isRegister ? "SIGN UP" : "SUBMIT"}
+              {!loading?(isLogin ? "LOGIN" : isRegister ? "SIGN UP" : "SUBMIT"):("")}
               </LoadingButton>
               <Typography
                 onClick={() => {
