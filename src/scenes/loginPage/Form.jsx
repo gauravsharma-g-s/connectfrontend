@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Snackbar } from "@mui/material";
-import MuiAlert from '@mui/material/Alert';
+import MuiAlert from "@mui/material/Alert";
 import {
   Box,
   TextField,
@@ -16,7 +16,7 @@ import { useDispatch } from "react-redux";
 import { setLogin } from "state";
 import Dropzone from "react-dropzone";
 import FlexBetween from "components/FlexBetween";
-import LoadingButton from '@mui/lab/LoadingButton';
+import LoadingButton from "@mui/lab/LoadingButton";
 
 const registerSchema = yup.object().shape({
   firstName: yup.string().required("required"),
@@ -34,8 +34,8 @@ const loginSchema = yup.object().shape({
 });
 
 const otpSchema = yup.object().shape({
-  otp: yup.string()
-})
+  otp: yup.string(),
+});
 
 const initialValuesRegister = {
   firstName: "",
@@ -53,8 +53,8 @@ const initialValuesLogin = {
 };
 
 const initialValuesOTP = {
-  otp: ""
-}
+  otp: "",
+};
 const Form = () => {
   const [pageType, setPageType] = useState("login");
   const { palette } = useTheme();
@@ -63,15 +63,15 @@ const Form = () => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const isLogin = pageType === "login";
   const isRegister = pageType === "register";
-  const [user, setUser] = useState(null)
+  const [user, setUser] = useState(null);
   const isOTP = pageType === "otp";
 
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState("");
   const [alertOpen, setAlertOpen] = useState(false);
-  const [loading,setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const register = async (values, onSubmitProps) => {
     // this allows us to send otp
-    const userWithOTP = { ...user, otp: values['otp'] }
+    const userWithOTP = { ...user, otp: values["otp"] };
 
     const savedUserResponse = await fetch(
       "https://connectserver.onrender.com/auth/register",
@@ -83,17 +83,19 @@ const Form = () => {
     );
     const savedUser = await savedUserResponse.json();
     setLoading(false);
-    if (savedUser.error.split(" ")[0] === "400" || savedUser.error.split(" ")[0] === "401") {      // USer enter Empty OTP or Wrong
+    if (
+      savedUser.error.split(" ")[0] === "400" ||
+      savedUser.error.split(" ")[0] === "401"
+    ) {
+      // USer enter Empty OTP or Wrong
       setErrorMessage("Please enter a valid OTP!");
       setAlertOpen(true);
-    }
-    else {
+    } else {
       onSubmitProps.resetForm();
       if (savedUser) {
         setPageType("login");
       }
     }
-
   };
 
   const otpSend = async (values, onSubmitProps) => {
@@ -101,17 +103,15 @@ const Form = () => {
     for (let value in values) {
       formData.append(value, values[value]);
     }
-    const otpResponse = await fetch("https://connectserver.onrender.com/auth/sendOTP",
-      {
-        method: "POST",
-        body: formData
-      });
+    const otpResponse = await fetch("https://connectserver.onrender.com/auth/sendOTP", {
+      method: "POST",
+      body: formData,
+    });
     const otpJSONRes = await otpResponse.json();
     if (otpJSONRes.message.split(" ")[0] === "409") {
       setErrorMessage("Another user with this email already exists!");
       setAlertOpen(true);
-    }
-    else {
+    } else {
       setUser({
         firstName: otpJSONRes.data.firstName,
         lastName: otpJSONRes.data.lastName,
@@ -121,16 +121,15 @@ const Form = () => {
         location: otpJSONRes.data.location,
         occupation: otpJSONRes.data.occupation,
         picturePath: otpJSONRes.data.picturePath,
-        otpId: otpJSONRes.data.otpId
-      })
+        otpId: otpJSONRes.data.otpId,
+      });
       onSubmitProps.resetForm();
       setLoading(false);
       if (otpJSONRes) {
         setPageType("otp");
       }
     }
-
-  }
+  };
 
   const login = async (values, onSubmitProps) => {
     const loggedInResponse = await fetch("https://connectserver.onrender.com/auth/login", {
@@ -140,20 +139,21 @@ const Form = () => {
     });
     const loggedIn = await loggedInResponse.json();
     setLoading(false);
-   
-    if (loggedInResponse.status===200) {                                                 // Login Succesfull
+
+    if (loggedInResponse.status === 200) {
+      // Login Succesfull
       onSubmitProps.resetForm();
-      dispatch(                                                     // dispatch to localStorage
+      dispatch(
+        // dispatch to localStorage
         setLogin({
           user: loggedIn.user,
           token: loggedIn.token,
         })
       );
-      navigate("/home");                                            // Goto HomePage
-    }
-    else if(loggedInResponse.status===400){
+      navigate("/home"); // Goto HomePage
+    } else if (loggedInResponse.status === 400) {
       setAlertOpen(true);
-      setErrorMessage("Please Check your email or password!")
+      setErrorMessage("Please Check your email or password!");
     }
   };
 
@@ -167,18 +167,26 @@ const Form = () => {
   };
 
   const handleAlertClose = (event, reason) => {
-    if (reason === 'clickaway') {
+    if (reason === "clickaway") {
       return;
     }
     setAlertOpen(false); // Close the error alert
-  }
+  };
   return (
     <>
       {/* <ErrorAlert open={alertOpen} message={errorMessage} onClose={handleAlertClose} /> */}
       <Formik
         onSubmit={handleFormSubmit}
-        initialValues={isLogin ? initialValuesLogin : isRegister ? initialValuesRegister : initialValuesOTP}
-        validationSchema={isLogin ? loginSchema : isRegister ? registerSchema : otpSchema}
+        initialValues={
+          isLogin
+            ? initialValuesLogin
+            : isRegister
+            ? initialValuesRegister
+            : initialValuesOTP
+        }
+        validationSchema={
+          isLogin ? loginSchema : isRegister ? registerSchema : otpSchema
+        }
       >
         {({
           values,
@@ -194,28 +202,25 @@ const Form = () => {
             <Box
               display="grid"
               gap="30px"
-              gridTemplateColumns="repeat(4, minmax(0, 1fr))"                // Total 4 columns of equal width
+              gridTemplateColumns="repeat(4, minmax(0, 1fr))" // Total 4 columns of equal width
               sx={{
-                "& > div": { gridColumn: isNonMobile ? undefined : "span 4" },    // Each direct child of box have [span 4 on mobile--> means whole box width] 
-              }}                                                                  // For non Mobile undefined [defined below]
+                "& > div": { gridColumn: isNonMobile ? undefined : "span 4" }, // Each direct child of box have [span 4 on mobile--> means whole box width]
+              }} // For non Mobile undefined [defined below]
             >
-
-              {
-                isOTP && (
-                  <>
-                    <TextField
-                      label="OTP"
-                      onBlur={handleBlur}
-                      onChange={handleChange}
-                      value={values.otp}
-                      name="otp"
-                      error={Boolean(touched.otp) && Boolean(errors.otp)}
-                      helperText={touched.otp && errors.otp}
-                      sx={{ gridColumn: "span 4" }}
-                    />
-                  </>
-                )
-              }
+              {isOTP && (
+                <>
+                  <TextField
+                    label="OTP"
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                    value={values.otp}
+                    name="otp"
+                    error={Boolean(touched.otp) && Boolean(errors.otp)}
+                    helperText={touched.otp && errors.otp}
+                    sx={{ gridColumn: "span 4" }}
+                  />
+                </>
+              )}
 
               {isRegister && (
                 <>
@@ -237,7 +242,9 @@ const Form = () => {
                     onChange={handleChange}
                     value={values.lastName}
                     name="lastName"
-                    error={Boolean(touched.lastName) && Boolean(errors.lastName)}
+                    error={
+                      Boolean(touched.lastName) && Boolean(errors.lastName)
+                    }
                     helperText={touched.lastName && errors.lastName}
                     sx={{ gridColumn: "span 2" }}
                   />
@@ -247,7 +254,9 @@ const Form = () => {
                     onChange={handleChange}
                     value={values.location}
                     name="location"
-                    error={Boolean(touched.location) && Boolean(errors.location)}
+                    error={
+                      Boolean(touched.location) && Boolean(errors.location)
+                    }
                     helperText={touched.location && errors.location}
                     sx={{ gridColumn: "span 4" }}
                   />
@@ -288,8 +297,9 @@ const Form = () => {
                             <p>Add Picture Here</p>
                           ) : (
                             <FlexBetween>
-                              <Typography>{values.picture.name}</Typography>              {/*  Picture Name   */}
-                              <EditOutlinedIcon />                                      {/*   Edit Button */}
+                              <Typography>{values.picture.name}</Typography>{" "}
+                              {/*  Picture Name   */}
+                              <EditOutlinedIcon /> {/*   Edit Button */}
                             </FlexBetween>
                           )}
                         </Box>
@@ -297,8 +307,7 @@ const Form = () => {
                     </Dropzone>
                   </Box>
                 </>
-              )
-              }
+              )}
 
               {!isOTP && (
                 <>
@@ -319,29 +328,45 @@ const Form = () => {
                     onChange={handleChange}
                     value={values.password}
                     name="password"
-                    error={Boolean(touched.password) && Boolean(errors.password)}
+                    error={
+                      Boolean(touched.password) && Boolean(errors.password)
+                    }
                     helperText={touched.password && errors.password}
                     sx={{ gridColumn: "span 4" }}
                   />
                 </>
-              )
-              }
+              )}
             </Box>
 
             {/* BUTTONS */}
             <Box>
-              <LoadingButton loading={loading} loadingIndicator={pageType==="otp"?"Verifying...":pageType==="register"?"Signing...":'Logging In...'} variant="outlined"
-               fullWidth
-               type="submit"
-               sx={{
-                 m: "2rem 0",
-                 p: "1rem",
-                 backgroundColor: palette.primary.main,
-                 color: palette.background.alt,
-                 "&:hover": { color: palette.primary.main },
-               }}
+              <LoadingButton
+                loading={loading}
+                loadingIndicator={
+                  pageType === "otp"
+                    ? "Verifying..."
+                    : pageType === "register"
+                    ? "Signing..."
+                    : "Logging In..."
+                }
+                variant="outlined"
+                fullWidth
+                type="submit"
+                sx={{
+                  m: "2rem 0",
+                  p: "1rem",
+                  backgroundColor: palette.primary.main,
+                  color: palette.background.alt,
+                  "&:hover": { color: palette.primary.main },
+                }}
               >
-              {!loading?(isLogin ? "LOGIN" : isRegister ? "SIGN UP" : "SUBMIT"):("")}
+                {!loading
+                  ? isLogin
+                    ? "LOGIN"
+                    : isRegister
+                    ? "SIGN UP"
+                    : "SUBMIT"
+                  : ""}
               </LoadingButton>
               <Typography
                 onClick={() => {
@@ -365,8 +390,17 @@ const Form = () => {
           </form>
         )}
       </Formik>
-      <Snackbar open={alertOpen} autoHideDuration={6000} onClose={handleAlertClose}>
-        <MuiAlert elevation={6} variant="filled" severity="error" onClose={handleAlertClose}>
+      <Snackbar
+        open={alertOpen}
+        autoHideDuration={6000}
+        onClose={handleAlertClose}
+      >
+        <MuiAlert
+          elevation={6}
+          variant="filled"
+          severity="error"
+          onClose={handleAlertClose}
+        >
           {errorMessage}
         </MuiAlert>
       </Snackbar>

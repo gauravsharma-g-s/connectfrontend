@@ -1,24 +1,23 @@
-.chat{
-    display:flex;
-    align-items:center;
-    padding:10px;
-    cursor:pointer;
-    margin-top:10px;
+.chat {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  cursor: pointer;
+  margin-top: 10px;
 }
 
-.chat:hover{
-    background-color:gray;
+.chat:hover {
+  background-color: gray;
 }
 
-.senderDetails{
-    display:flex;
-    flex-direction:column
+.senderDetails {
+  display: flex;
+  flex-direction: column;
 }
 
-.timeDetails{
-    display:flex;
-    flex-direction:column;
-    margin-left:auto;
-    margin-right:auto
+.timeDetails {
+  display: flex;
+  flex-direction: column;
+  margin-left: auto;
+  margin-right: auto;
 }
-
